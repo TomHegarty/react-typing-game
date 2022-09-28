@@ -1,0 +1,17 @@
+.quote-header {
+    width: 50%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.quote-header p {
+    width: 100%;
+    text-align: initial;
+}
+
+.quote-category {
+    color: black;
+    background-color: coral;
+}
