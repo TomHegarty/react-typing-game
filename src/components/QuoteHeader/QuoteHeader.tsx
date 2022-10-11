@@ -12,8 +12,10 @@ const QuoteHeader = () => {
     });
     const [characterIndex, setCharacterIndex] = useState<number>(0);
     const [completionPercent, setCompletionPercent] = useState<number>(0);
+    const [progressColor, setProgressColor] = useState<string>('red');
 
     const dataFetchedRef = useRef(false);
+    let quoteBody = useRef<any>();
 
     const divElRef = useCallback((divElement:HTMLDivElement) => {
         if (divElement) {
@@ -35,17 +37,25 @@ const QuoteHeader = () => {
 
     const handleKeyPress = (key: string) => {
 
-        if(characterIndex === quote.quote.split("").length){
+        if(characterIndex === quote.quote.split("").length - 1){
             alert(`your're winner`);
             return
         }
 
         if(key === quote.quote.split("")[characterIndex]){
             console.log("yes");
+            setProgressColor('green');
             setCharacterIndex(characterIndex + 1); //?
             setCompletionPercent((characterIndex/quote.quote.split("").length)*100);
+
+            let splitContent = quote.quote.split('');
+            let correctLetters = [quote.quote.slice(0, characterIndex)];
+            correctLetters.push(splitContent[characterIndex]);
+            quoteBody.current.innerHTML = `<span class="custom">${correctLetters.join('')}</span>${splitContent.slice(characterIndex + 1).join('')}`; // better way of doing this for sure
+
         }else{
             console.log('no');
+            setProgressColor('red');
         }
     }; 
 
@@ -62,10 +72,10 @@ const QuoteHeader = () => {
     return (
         <>
             <div className="quote-header" ref={divElRef} tabIndex={1} onKeyDown={(e: any) => handleKeyPress(e.key)}>
-                <h1>{quote.quote}</h1>
+                <h1 ref={quoteBody}>{quote.quote}</h1>
                 <p>-{quote.author}</p>
             </div>
-            <ProgressBar percent={completionPercent}/>
+            <ProgressBar percent={completionPercent} color={progressColor}/>
         </>
     );
 }
