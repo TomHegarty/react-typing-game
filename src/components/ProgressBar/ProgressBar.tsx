@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './ProgressBar.css'; 
 
-const ProgressBar = (percent) => {
-    
+const ProgressBar = (percent:any) => {
+
     return (
         <div className="progress-bar-outer">
             <div className="progress-bar-inner">

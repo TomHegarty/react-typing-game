@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Component } from "react";
 import './QuoteHeader.css'; 
+
+import ProgressBar from '../ProgressBar/ProgressBar';
 
 const QuoteHeader = () => {
 
@@ -9,10 +11,11 @@ const QuoteHeader = () => {
         category: "loading..."
     });
     const [characterIndex, setCharacterIndex] = useState<number>(0);
+    const [completionPercent, setCompletionPercent] = useState<number>(0);
 
     const dataFetchedRef = useRef(false);
 
-    const divElRef = useCallback((divElement:any) => {
+    const divElRef = useCallback((divElement:HTMLDivElement) => {
         if (divElement) {
             divElement.focus();
         }
@@ -30,7 +33,6 @@ const QuoteHeader = () => {
         })
     }
 
-
     const handleKeyPress = (key: string) => {
 
         if(characterIndex === quote.quote.split("").length){
@@ -41,6 +43,7 @@ const QuoteHeader = () => {
         if(key === quote.quote.split("")[characterIndex]){
             console.log("yes");
             setCharacterIndex(characterIndex + 1); //?
+            setCompletionPercent((characterIndex/quote.quote.split("").length)*100);
         }else{
             console.log('no');
         }
@@ -57,10 +60,13 @@ const QuoteHeader = () => {
     },[])
 
     return (
-        <div className="quote-header" ref={divElRef} tabIndex={1} onKeyDown={(e: any) => handleKeyPress(e.key)}>
-            <h1>{quote.quote}</h1>
-            <p>-{quote.author}</p>
-        </div>
+        <>
+            <div className="quote-header" ref={divElRef} tabIndex={1} onKeyDown={(e: any) => handleKeyPress(e.key)}>
+                <h1>{quote.quote}</h1>
+                <p>-{quote.author}</p>
+            </div>
+            <ProgressBar percent={completionPercent}/>
+        </>
     );
 }
 
