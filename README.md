@@ -13,4 +13,4 @@ add a file named '.env' to the root directory, setting REACT_APP_QUOTE_API_KEY =
 
 npm start to run local dev server, npm run build to generate production build. 
 
-:)
+🤠
