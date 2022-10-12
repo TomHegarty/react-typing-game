@@ -1,9 +1,17 @@
 .quote-header {
+    margin-top: 10rem;
     width: 50%;
     margin: auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+.quote-header:focus {
+    background-color: yellow;
+    border: solid black;
+    outline: none;
 }
 
 .quote-header p {
@@ -16,6 +24,10 @@
     background-color: coral;
 }
 
-.custom{
+.correct{
     color: green;
+}
+
+.current{
+    text-decoration: underline;
 }

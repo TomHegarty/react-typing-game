@@ -15,7 +15,10 @@ const QuoteHeader = () => {
     const [progressColor, setProgressColor] = useState<string>('red');
 
     const dataFetchedRef = useRef(false);
-    let quoteBody = useRef<any>();
+    const correct = useRef<any>();
+    const currentLetter = useRef<any>();
+    const remaining = useRef<any>();
+    
 
     const divElRef = useCallback((divElement:HTMLDivElement) => {
         if (divElement) {
@@ -26,7 +29,7 @@ const QuoteHeader = () => {
     const fetchData = () => {
         fetch('https://api.api-ninjas.com/v1/quotes', {
             headers: {
-                'X-Api-Key': '7kdEYjZywhrLKqyGpt+Tjg==7xwvtVkJWtHQzZ7x'
+                'X-Api-Key': process.env.REACT_APP_QUOTE_API_KEY as string
             },
         })
         .then((response) => response.json())
@@ -38,12 +41,13 @@ const QuoteHeader = () => {
     const handleKeyPress = (key: string) => {
 
         if(characterIndex === quote.quote.split("").length - 1){
-            alert(`your're winner`);
-            return
+            alert(`your're winner`); //
+            setCharacterIndex(characterIndex + 1); //?
+            setCompletionPercent(100);
+            return;
         }
 
         if(key === quote.quote.split("")[characterIndex]){
-            console.log("yes");
             setProgressColor('green');
             setCharacterIndex(characterIndex + 1); //?
             setCompletionPercent((characterIndex/quote.quote.split("").length)*100);
@@ -51,10 +55,11 @@ const QuoteHeader = () => {
             let splitContent = quote.quote.split('');
             let correctLetters = [quote.quote.slice(0, characterIndex)];
             correctLetters.push(splitContent[characterIndex]);
-            quoteBody.current.innerHTML = `<span class="custom">${correctLetters.join('')}</span>${splitContent.slice(characterIndex + 1).join('')}`; // better way of doing this for sure
-
+            
+            correct.current.innerHTML = correctLetters.join('');
+            currentLetter.current.innerHTML = splitContent[characterIndex + 1];
+            remaining.current.innerHTML = splitContent.slice(characterIndex + 2).join('');
         }else{
-            console.log('no');
             setProgressColor('red');
         }
     }; 
@@ -72,7 +77,7 @@ const QuoteHeader = () => {
     return (
         <>
             <div className="quote-header" ref={divElRef} tabIndex={1} onKeyDown={(e: any) => handleKeyPress(e.key)}>
-                <h1 ref={quoteBody}>{quote.quote}</h1>
+                <h1><span ref={correct} className="correct"></span><span ref={currentLetter} className="current"></span><span ref={remaining}></span>{quote.quote}</h1>
                 <p>-{quote.author}</p>
             </div>
             <ProgressBar percent={completionPercent} color={progressColor}/>

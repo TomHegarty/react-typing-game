@@ -8,7 +8,7 @@ const ProgressBar = (percent:any, color:string) => {
     return (
         <div className="progress-bar-outer">
             <div className="progress-bar-inner">
-                <div className="progress-bar" style={{width : `${percent.percent}%`, backgroundColor: color}}></div>
+                <div className="progress-bar" style={{width : `${Math.floor(percent.percent)}%`, backgroundColor: color}}></div>
             </div>
         </div>
     );
