@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, Component } from "react";
 import './QuoteHeader.css'; 
 
 import ProgressBar from '../ProgressBar/ProgressBar';
+import CompletionOutput from '../CompletionOutput/CompletionOutput';
 
 const QuoteHeader = () => {
 
@@ -12,13 +13,13 @@ const QuoteHeader = () => {
     });
     const [characterIndex, setCharacterIndex] = useState<number>(0);
     const [completionPercent, setCompletionPercent] = useState<number>(0);
+    const [completionMessage, setcompletionMessage] = useState<string>('keep typing');
     const [progressColor, setProgressColor] = useState<string>('red');
 
     const dataFetchedRef = useRef(false);
     const correct = useRef<any>();
     const currentLetter = useRef<any>();
     const remaining = useRef<any>();
-    
 
     const divElRef = useCallback((divElement:HTMLDivElement) => {
         if (divElement) {
@@ -41,7 +42,8 @@ const QuoteHeader = () => {
     const handleKeyPress = (key: string) => {
 
         if(characterIndex === quote.quote.split("").length - 1){
-            alert(`your're winner`); //
+            console.log('done');
+            setcompletionMessage(`your're winner`); 
             setCharacterIndex(characterIndex + 1); //?
             setCompletionPercent(100);
             return;
@@ -61,26 +63,30 @@ const QuoteHeader = () => {
             remaining.current.innerHTML = splitContent.slice(characterIndex + 2).join('');
         }else{
             setProgressColor('red');
+            setcompletionMessage('wrong key');
         }
     }; 
 
     useEffect(() => {
-
         // guard to prevetn strict mode re-rendering on 2nd call
         if (dataFetchedRef.current) return;
+
         dataFetchedRef.current = true;
-
         fetchData();
-
     },[])
 
     return (
         <>
             <div className="quote-header" ref={divElRef} tabIndex={1} onKeyDown={(e: any) => handleKeyPress(e.key)}>
-                <h1><span ref={correct} className="correct"></span><span ref={currentLetter} className="current"></span><span ref={remaining}></span>{quote.quote}</h1>
+                <h1>
+                    <span ref={correct} className="correct"></span>
+                    <span ref={currentLetter} className="current"></span>
+                    <span ref={remaining}>{quote.quote}</span>
+                </h1>
                 <p>-{quote.author}</p>
             </div>
             <ProgressBar percent={completionPercent} color={progressColor}/>
+            <CompletionOutput message={completionMessage}></CompletionOutput>
         </>
     );
 }
