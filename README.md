@@ -1,7 +1,7 @@
 ## Simple Typing Game 
----
-A simple (and over engineered) typing game using React.js with TypeScript, fetching quotes from API Ninjas' quotes API - [https://api-ninjas.com/api/quotes]
 
+A simple (and over engineered) typing game using React.js with TypeScript, fetching quotes from API Ninjas' quotes API - [https://api-ninjas.com/api/quotes]
+---
 
 ### Set Up
 install packages using `npm i`

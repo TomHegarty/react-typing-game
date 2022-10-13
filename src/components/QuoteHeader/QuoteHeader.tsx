@@ -15,6 +15,7 @@ const QuoteHeader = () => {
     const [completionPercent, setCompletionPercent] = useState<number>(0);
     const [completionMessage, setcompletionMessage] = useState<string>('keep typing');
     const [progressColor, setProgressColor] = useState<string>('red');
+    const [timerState, setTimerState] = useState<string>('stop');
 
     const dataFetchedRef = useRef(false);
     const correct = useRef<any>();
@@ -50,9 +51,14 @@ const QuoteHeader = () => {
         }
 
         if(key === quote.quote.split("")[characterIndex]){
+
+            if(characterIndex === 1){
+                setTimerState("start");
+            }
             setProgressColor('green');
             setCharacterIndex(characterIndex + 1); //?
             setCompletionPercent((characterIndex/quote.quote.split("").length)*100);
+            setcompletionMessage('keep going');
 
             let splitContent = quote.quote.split('');
             let correctLetters = [quote.quote.slice(0, characterIndex)];
@@ -86,7 +92,7 @@ const QuoteHeader = () => {
                 <p>-{quote.author}</p>
             </div>
             <ProgressBar percent={completionPercent} color={progressColor}/>
-            <CompletionOutput message={completionMessage}></CompletionOutput>
+            <CompletionOutput message={completionMessage} timerState={timerState}></CompletionOutput>
         </>
     );
 }
