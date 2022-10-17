@@ -1,8 +1,11 @@
-import { useState, useEffect, useRef, useCallback, Component } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import './QuoteHeader.css'; 
 
 import ProgressBar from '../ProgressBar/ProgressBar';
 import CompletionOutput from '../CompletionOutput/CompletionOutput';
+
+let timerset:boolean = false;
+let timer:any = 0;
 
 const QuoteHeader = () => {
 
@@ -13,9 +16,10 @@ const QuoteHeader = () => {
     });
     const [characterIndex, setCharacterIndex] = useState<number>(0);
     const [completionPercent, setCompletionPercent] = useState<number>(0);
-    const [completionMessage, setcompletionMessage] = useState<string>('keep typing');
     const [progressColor, setProgressColor] = useState<string>('red');
-    const [timerState, setTimerState] = useState<string>('stop');
+    const [seconds, setSeconds] = useState<number>(0);
+    const [mistakes, setMistakes] = useState<number>(0);
+    const [speed, setSpeed] = useState<number>(0);
 
     const dataFetchedRef = useRef(false);
     const correct = useRef<any>();
@@ -28,7 +32,7 @@ const QuoteHeader = () => {
         }
     }, []);
 
-    const fetchData = () => {
+    const fetchData = ():void => {
         fetch('https://api.api-ninjas.com/v1/quotes', {
             headers: {
                 'X-Api-Key': process.env.REACT_APP_QUOTE_API_KEY as string
@@ -40,25 +44,38 @@ const QuoteHeader = () => {
         })
     }
 
-    const handleKeyPress = (key: string) => {
+    const handleTimer = (state:string):void => {
+        if(timerset && state === "start") return; 
+        timerset = true;
 
+        if(state === "start"){
+            timer = setInterval(() => {
+                setSeconds((prevSeconds) => prevSeconds + 1);
+            }, 1000);
+        }else if(state === "stop"){
+            clearInterval(timer);
+        }
+    }
+
+    const handleKeyPress = (key: string):void => {
+
+        // complete
         if(characterIndex === quote.quote.split("").length - 1){
-            console.log('done');
-            setcompletionMessage(`your're winner`); 
-            setCharacterIndex(characterIndex + 1); //?
+    
             setCompletionPercent(100);
+            setCharacterIndex((prevCharacterIndex) => characterIndex + 1);
+            setSeconds((prevSeconds) => prevSeconds);
+            handleTimer("stop"); // this isn't working ???
             return;
         }
 
         if(key === quote.quote.split("")[characterIndex]){
-
-            if(characterIndex === 1){
-                setTimerState("start");
-            }
+            // correct key
+            if(!timerset) handleTimer("start");
+            
             setProgressColor('green');
-            setCharacterIndex(characterIndex + 1); //?
-            setCompletionPercent((characterIndex/quote.quote.split("").length)*100);
-            setcompletionMessage('keep going');
+            setCharacterIndex(characterIndex + 1); 
+            setCompletionPercent( Math.floor((characterIndex/quote.quote.split("").length)*100) );
 
             let splitContent = quote.quote.split('');
             let correctLetters = [quote.quote.slice(0, characterIndex)];
@@ -67,14 +84,20 @@ const QuoteHeader = () => {
             correct.current.innerHTML = correctLetters.join('');
             currentLetter.current.innerHTML = splitContent[characterIndex + 1];
             remaining.current.innerHTML = splitContent.slice(characterIndex + 2).join('');
-        }else{
+
+            // speed calucalation
+            const completeWords = quote.quote.slice(0, characterIndex).split(' ').length - 1;
+            setSpeed( Math.round((completeWords / seconds) * 60));
+
+        }else if(completionPercent < 100) {
+            // wrong key
             setProgressColor('red');
-            setcompletionMessage('wrong key');
+            setMistakes((prevMistakes) => mistakes + 1);
         }
     }; 
 
     useEffect(() => {
-        // guard to prevetn strict mode re-rendering on 2nd call
+        // guard to prevent strict mode re-rendering on 2nd call
         if (dataFetchedRef.current) return;
 
         dataFetchedRef.current = true;
@@ -92,7 +115,7 @@ const QuoteHeader = () => {
                 <p>-{quote.author}</p>
             </div>
             <ProgressBar percent={completionPercent} color={progressColor}/>
-            <CompletionOutput message={completionMessage} timerState={timerState}></CompletionOutput>
+            <CompletionOutput time={seconds} mistakes={mistakes} speed={speed} completion={completionPercent}></CompletionOutput>
         </>
     );
 }

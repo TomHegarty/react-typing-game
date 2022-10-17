@@ -1,0 +1,29 @@
+.completion-outer {
+    box-sizing: border-box;
+    width: 70%;
+    margin: 1rem auto;
+    padding: 0.5rem;
+    border: solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.output-box {
+    box-sizing: border-box;
+    width: calc(25% - 0.5rem);
+    border: solid black;
+    padding: 0 0.5rem 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.output-box-header {
+    width: 100%;  
+}
+
+.output-box-value {
+    width: 100%; 
+    margin: 0 0.5rem 0.5rem; 
+    font-size: 150%;
+}
