@@ -17,7 +17,7 @@ const CompletionOutput = (message: Stats) => {
     });
 
     return (
-        <div className="completion-outer">
+        <div className="completion-outer" data-testid="CompletionOutput-1">
             <div className="output-box">
                 <div className="output-box-header">Time</div> 
                 <div className="output-box-value">{message.time}s</div>
